@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Coding 建站到上线 × XPENG 内部分享</title>
+  <meta name="description" content="用 AI 写代码建站，从灵感到上线的全流程培训">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- 添加 ESM 模块映射，解决 Three.js 附加组件内部的 import 'three' 报错 -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- ====== 全局导航栏（P1: 新增） ====== -->
+  <nav class="site-nav" id="site-nav">
+    <a href="#hero" class="nav-logo">Vibe Coding</a>
+    <ul class="nav-links">
+      <li><a href="#tools" class="nav-link" data-section="tools">工具</a></li>
+      <li><a href="#coding" class="nav-link" data-section="coding">技巧</a></li>
+      <li><a href="#showcase" class="nav-link" data-section="showcase">展示</a></li>
+      <li><a href="#deploy" class="nav-link" data-section="deploy">部署</a></li>
+      <li><a href="#closing" class="nav-link" data-section="closing">收尾</a></li>
+    </ul>
+    <div class="nav-progress" id="nav-progress"></div>
+  </nav>
+
+  <!-- ====== Hero Section ====== -->
+  <section id="hero" class="section">
+    <canvas id="hero-canvas"></canvas>
+    <!-- 背景大字：参考 luni.app，放在 3D 和内容之间，渐隐效果 -->
+    <div class="hero-bg-title" aria-hidden="true">Vibe Coding</div>
+    <div class="hero-content">
+      <span class="hero-badge">XPENG 内部分享 · 周四</span>
+      <p class="hero-subtitle">从灵感到上线，用 AI 建你的第一个网站</p>
+      <a href="#tools" class="hero-cta">开始探索 ↓</a>
+    </div>
+  </section>
+
+  <!-- ====== Section 1: 工具的选择 ====== -->
+  <section id="tools" class="section">
+    <span class="section-bg-text">Tools</span>
+    <div class="section-inner">
+      <h2 class="section-title fade-up">工具的选择</h2>
+      <p class="section-desc fade-up delay-1">选对工具，事半功倍。以下是我们推荐的 AI Coding 工具栈。</p>
+      <div class="tools-grid">
+        <!-- AI Studio 主推卡 -->
+        <div class="glass-card tool-card-main fade-up delay-1">
+          <span class="tool-badge">⭐ 推荐</span>
+          <h3 class="card-title">Google AI Studio</h3>
+          <p class="card-desc">强大的 AI 全栈开发平台。100 元学生会员 Pro/年，性价比极高。</p>
+
+          <!-- 功能 Tab 切换 -->
+          <div class="feature-tabs">
+            <button class="feature-tab active" data-tab="build">Build</button>
+            <button class="feature-tab" data-tab="prompts">Prompts</button>
+            <button class="feature-tab" data-tab="deploy">Deploy</button>
+          </div>
+          <div class="feature-content">
+            <div class="feature-panel active" id="panel-build">
+              <h4 class="panel-title">🏗️ Build — 可视化建站</h4>
+              <p class="card-desc">直接在浏览器中用自然语言描述你的需求，AI 自动生成完整的网页代码。支持实时预览和迭代修改。</p>
+              <div class="feature-points">
+                <span class="feature-point">💬 自然语言驱动</span>
+                <span class="feature-point">⚡ 实时预览</span>
+                <span class="feature-point">🔄 迭代修改</span>
+              </div>
+              <div class="panel-screenshot">
+                <div class="mock-ui mock-ui--build">
+                  <div class="mock-card">
+                    <div class="mock-header">
+                      <span class="mock-dot mock-dot--green"></span>
+                      <span class="mock-label">AI Studio Build</span>
+                    </div>
+                    <div class="mock-terminal">
+                      &gt; 帮我创建一个带导航栏的着陆页...<br>
+                      <span class="mock-success">✓ 已生成 index.html, style.css</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feature-panel" id="panel-prompts">
+              <h4 class="panel-title">💬 Prompts — 智能提示</h4>
+              <p class="card-desc">内置多种提示词模板，帮你快速生成高质量的页面。从简单的着陆页到复杂的数据看板，一句话搞定。</p>
+              <div class="feature-points">
+                <span class="feature-point">📋 提示词模板</span>
+                <span class="feature-point">🎯 场景化推荐</span>
+                <span class="feature-point">🧠 上下文记忆</span>
+              </div>
+              <div class="panel-screenshot">
+                <div class="mock-ui mock-ui--prompts">
+                  <div class="mock-prompt">"做一个暗黑风格的 Dashboard..."</div>
+                  <div class="mock-prompt mock-prompt--dim">"创建一个电商产品展示页..."</div>
+                  <div class="mock-prompt mock-prompt--dimmer">"设计一个 SaaS 定价页面..."</div>
+                </div>
+              </div>
+            </div>
+            <div class="feature-panel" id="panel-deploy">
+              <h4 class="panel-title">🚀 Deploy — 一键部署</h4>
+              <p class="card-desc">代码生成后，一键部署到 Google Cloud 或导出到本地。支持自定义域名绑定。</p>
+              <div class="feature-points">
+                <span class="feature-point">☁️ Google Cloud</span>
+                <span class="feature-point">📦 导出代码</span>
+                <span class="feature-point">🌐 自定义域名</span>
+              </div>
+              <div class="panel-screenshot">
+                <div class="mock-ui mock-ui--deploy">
+                  <div class="mock-card">
+                    <div class="mock-emoji">🎉</div>
+                    <div class="mock-label mock-label--bold">部署成功！</div>
+                    <div class="mock-url">https://your-app.web.app</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Antigravity -->
+        <div class="glass-card tool-card-sub fade-up delay-2">
+          <div class="tool-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+            <span>Antigravity</span>
+          </div>
+          <p class="card-desc--sm">VS Code 原生 AI 编码助手，适合有一定编码基础的开发者。强大的代码理解和重构能力。</p>
+          <div class="sub-card-features">
+            <span class="tool-killer">🔥 VS Code 深度集成</span>
+            <span class="tool-killer">📂 多文件编辑</span>
+          </div>
+        </div>
+
+        <!-- Codex -->
+        <div class="glass-card tool-card-sub fade-up delay-3">
+          <div class="tool-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span>Codex</span>
+          </div>
+          <p class="card-desc--sm">OpenAI 的代码生成引擎，支持多种编程语言。可通过 API 集成到自有工作流中。</p>
+          <div class="sub-card-features">
+            <span class="tool-killer">🧩 API 灵活集成</span>
+            <span class="tool-killer">🌍 多语言支持</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Section 2: UI Coding 沟通技巧 ====== -->
+  <section id="coding" class="section">
+    <span class="section-bg-text">Communicate</span>
+    <div class="section-inner">
+      <h2 class="section-title fade-up">UI Coding 沟通技巧</h2>
+      <p class="section-desc fade-up delay-1">和 AI 协作写代码，关键不是技术，而是如何沟通。跟着这 6 步走，快速复现整个过程。</p>
+
+      <div class="coding-layout fade-up delay-2">
+        <!-- 左侧步骤导航 -->
+        <nav class="step-nav">
+          <button class="step-btn active" data-step="0">① 提示词技巧</button>
+          <button class="step-btn" data-step="1">② 交互设计</button>
+          <button class="step-btn" data-step="2">③ 动效设计</button>
+          <button class="step-btn" data-step="3">④ 反馈与修改</button>
+          <button class="step-btn" data-step="4">⑤ 占位图替换</button>
+          <button class="step-btn" data-step="5">⑥ 部署上线</button>
+        </nav>
+
+        <!-- 右侧对话演示区 -->
+        <div class="chat-area">
+          <div class="chat-messages" id="chat-messages">
+            <!-- JS 动态填充 -->
+          </div>
+          <div class="preview-box" id="preview-box">
+            <span class="preview-box-label">预览效果</span>
+          </div>
+          <!-- 自动播放控制 -->
+          <div class="autoplay-controls">
+            <button class="btn-autoplay" id="btn-autoplay">▶ 自动演示</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Section 3: 项目展示 ====== -->
+  <section id="showcase" class="section">
+    <span class="section-bg-text">Showcase</span>
+    <div class="section-inner">
+      <h2 class="section-title fade-up">项目展示</h2>
+      <p class="section-desc fade-up delay-1">看看 Vibe Coding 做出来的真实项目是什么样的。</p>
+
+      <div class="browser-frame fade-up delay-2">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+          </div>
+          <div class="browser-nav-btns">
+            <span class="browser-nav-btn">←</span>
+            <span class="browser-nav-btn">→</span>
+          </div>
+          <span class="browser-url">
+            <svg class="lock-icon-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            workflow.beastle.cn
+          </span>
+        </div>
+        <!-- P0: 恢复 workflow 预览 -->
+        <div class="showcase-iframe-wrapper">
+          <iframe src="https://workflow.beastle.cn" title="Workflow 自动化管理平台"></iframe>
+        </div>
+      </div>
+      <a href="https://workflow.beastle.cn" target="_blank" rel="noopener" class="open-link">在新窗口打开完整项目 →</a>
+    </div>
+  </section>
+
+  <!-- ====== Section 4: 域名 & 部署 ====== -->
+  <section id="deploy" class="section">
+    <span class="section-bg-text">Deploy</span>
+    <div class="section-inner">
+      <h2 class="section-title section-title--center fade-up">域名注册 & 部署上线</h2>
+      <p class="section-desc section-desc--center fade-up delay-1">从购买域名到网站上线的完整阿里云流程。</p>
+
+      <div class="deploy-flow fade-up delay-2">
+        <!-- 步骤 1 -->
+        <div class="deploy-step">
+          <div class="deploy-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h4>注册域名</h4>
+          <p>在阿里云万网选购并注册你的域名</p>
+          <div class="deploy-detail-inner">
+            1. 访问 wanwang.aliyun.com<br>
+            2. 搜索你想要的域名<br>
+            3. 选择 .cn 或 .com 后缀<br>
+            4. 首年约 ¥29-55 元
+          </div>
+        </div>
+
+        <!-- 步骤 2 -->
+        <div class="deploy-step">
+          <div class="deploy-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h4>ICP 备案</h4>
+          <p>通过阿里云备案系统提交，约 7-14 个工作日</p>
+          <div class="deploy-detail-inner">
+            1. 阿里云控制台 → ICP 备案<br>
+            2. 填写主体信息（个人/企业）<br>
+            3. 上传身份证正反面<br>
+            4. 等待管局审核 7-14 天
+          </div>
+        </div>
+
+        <!-- 步骤 3 -->
+        <div class="deploy-step">
+          <div class="deploy-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <h4>DNS 解析</h4>
+          <p>添加 CNAME 或 A 记录指向你的服务器</p>
+          <div class="deploy-detail-inner">
+            1. 进入域名控制台 → 解析设置<br>
+            2. 添加 CNAME 记录<br>
+            3. 记录值填写平台提供的地址<br>
+            4. TTL 设为 10 分钟即可
+          </div>
+        </div>
+
+        <!-- 步骤 4 -->
+        <div class="deploy-step">
+          <div class="deploy-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+          <h4>上线发布</h4>
+          <p>部署到 Vercel / Cloudflare Pages 等平台</p>
+          <div class="deploy-detail-inner">
+            1. GitHub 推送代码<br>
+            2. Vercel 导入仓库<br>
+            3. 设置自定义域名<br>
+            4. 自动 CI/CD 部署 ✓
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Section 5: 培训收尾 ====== -->
+  <section id="closing" class="section section-auto">
+    <span class="section-bg-text">Summary</span>
+    <div class="section-inner">
+      <div class="closing-grid">
+        <!-- 实战作业 -->
+        <div class="glass-card fade-up">
+          <h3>🎯 实战作业</h3>
+          <p class="challenge-title">用 AI Studio 做一个你自己的个人网站</p>
+          <p class="challenge-desc">不限主题，可以是个人作品集、团队介绍页、兴趣爱好展示…… 下周五前提交链接。</p>
+        </div>
+
+        <!-- 培训资料 -->
+        <div class="glass-card fade-up delay-1">
+          <h3>📚 培训资料</h3>
+          <ul class="resource-list">
+            <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank">📄 本次培训完整文档</a></li>
+            <li><a href="https://aistudio.google.com" target="_blank">🤖 Google AI Studio</a></li>
+            <li><a href="https://workflow.beastle.cn" target="_blank">🌐 项目案例：Workflow</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Footer ====== -->
+  <footer class="site-footer">
+    <div class="divider"></div>
+    <p>XPENG · Vibe Coding 内部分享</p>
+  </footer>
+
+  <!-- ====== Scripts ====== -->
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <!-- 主逻辑 -->
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>
