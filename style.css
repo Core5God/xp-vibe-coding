@@ -74,6 +74,7 @@ html {
   scroll-snap-type: y mandatory; /* 恢复强磁吸，配合 smooth behavior 避免闪烁 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* 禁止水平滚动 */
 }
 
 body {
@@ -81,6 +82,7 @@ body {
   font-size: var(--text-body);
   color: var(--color-text);
   line-height: 1.7;
+  overflow-x: hidden; /* 禁止水平滚动 */
   /* luni.app 风格：柔和粉紫→薰衣草→天蓝的亮色渐变 */
   background: 
     linear-gradient(
@@ -186,7 +188,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden; /* 防止 section 内装饰元素溢出导致水平滚动 */
   /* 要点5: 磁力对齐 */
   scroll-snap-align: start;
   scroll-snap-stop: always; /* 恢复：一次只能滑一屏 */
