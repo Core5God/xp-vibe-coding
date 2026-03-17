@@ -157,7 +157,7 @@ function initHeroScene() {
   // 后方小浮岛（增加 Z 深度）
   const plat4Geo = new THREE.CylinderGeometry(1.0, 1.1, 0.3, 20);
   const plat4 = new THREE.Mesh(plat4Geo, clayMat('#b8d4e8'));
-  plat4.position.set(1.5, 0.3, -3);
+  plat4.position.set(2.5, 0.3, -3); // 往右移动，避免车头遮挡笔记本
   plat4.castShadow = true;
   plat4.receiveShadow = true;
   islandGroup.add(plat4);
@@ -279,7 +279,7 @@ function initHeroScene() {
     logoGroup.scale.set(scaleFactor, -scaleFactor, scaleFactor);
     // 调高并朝镜头拉近，避免被书本模型遮挡
     logoGroup.position.set(
-      -129.96 * scaleFactor / 2 + 1.2,  
+      -129.96 * scaleFactor / 2 + 2.2,  // 与车+底座对齐，往右移
       2.0,   // Height
       -1.5   // Z depth (拉近)
     );
@@ -572,9 +572,8 @@ function initHeroScene() {
     // 重新计算缩放后的 bounding box，让底部贴地
     box.setFromObject(carModel);
     const bottomY = box.min.y;
-    // 放到后方小平台 plat4 (1.5, 0.3, -3) 上，飞翼 logo 正下方
-    carModel.position.set(1.5, -bottomY + 0.45, -3);
-    carModel.rotation.y = Math.PI * 0.6; // 车头朝向镜头
+    carModel.position.set(2.5, -bottomY + 0.45, -3); // 与 plat4 对齐
+    carModel.rotation.y = Math.PI * 1.6; // 车头朝向镜头，侧 45° 角
 
     // 遍历所有 mesh：应用环境贴图、阴影、平滑法线
     carModel.traverse((child) => {
@@ -677,7 +676,7 @@ function initHeroScene() {
       const baseY = carModel.userData.baseY ?? carModel.position.y;
       if (!carModel.userData.baseY) carModel.userData.baseY = baseY;
       carModel.position.y = baseY + Math.sin(t * 1.0 + 4) * 0.03;
-      carModel.rotation.y = Math.PI * 0.6 + Math.sin(t * 0.5) * 0.03;
+      carModel.rotation.y = Math.PI * 1.6 + Math.sin(t * 0.5) * 0.03;
     }
 
     renderer.render(scene, camera);
