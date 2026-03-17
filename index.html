@@ -8,7 +8,10 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- 性能优化：字体异步加载，避免阻塞渲染 -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <!-- 添加 ESM 模块映射，解决 Three.js 附加组件内部的 import 'three' 报错 -->
   <script type="importmap">
     {
@@ -36,11 +39,15 @@
 
   <!-- ====== Hero Section ====== -->
   <section id="hero" class="section">
+    <!-- 笔记本屏幕视频源（隐藏，Three.js VideoTexture 使用） -->
+    <video id="screen-video" src="assets/screen-video.mp4"
+           autoplay muted loop playsinline
+           style="display:none;"></video>
     <canvas id="hero-canvas"></canvas>
     <!-- 背景大字：参考 luni.app，放在 3D 和内容之间，渐隐效果 -->
     <div class="hero-bg-title" aria-hidden="true">Vibe Coding</div>
     <div class="hero-content">
-      <span class="hero-badge">XPENG 内部分享 · 周四</span>
+      <span class="hero-badge">XPENG 内部分享</span>
       <p class="hero-subtitle">从灵感到上线，用 AI 建你的第一个网站</p>
       <a href="#tools" class="hero-cta">开始探索 ↓</a>
     </div>
@@ -173,18 +180,36 @@
           <button class="step-btn" data-step="5">⑥ 部署上线</button>
         </nav>
 
-        <!-- 右侧对话演示区 -->
+        <!-- 右侧对话演示区：左右分栏 -->
         <div class="chat-area">
-          <div class="chat-messages" id="chat-messages">
-            <!-- JS 动态填充 -->
+          <!-- 左栏：对话流 -->
+          <div class="chat-panel">
+            <div class="chat-panel-header">
+              <span class="chat-panel-dot"></span>
+              <span class="chat-panel-title">💬 AI 对话</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+              <!-- JS 动态填充 -->
+            </div>
           </div>
-          <div class="preview-box" id="preview-box">
-            <span class="preview-box-label">预览效果</span>
+          <!-- 右栏：效果预览（模拟浏览器窗口） -->
+          <div class="preview-panel">
+            <div class="preview-browser-bar">
+              <div class="preview-dots">
+                <span class="preview-dot"></span>
+                <span class="preview-dot"></span>
+                <span class="preview-dot"></span>
+              </div>
+              <span class="preview-url-bar">localhost:3000</span>
+            </div>
+            <div class="preview-box" id="preview-box">
+              <!-- JS 动态填充预览内容 -->
+            </div>
           </div>
-          <!-- 自动播放控制 -->
-          <div class="autoplay-controls">
-            <button class="btn-autoplay" id="btn-autoplay">▶ 自动演示</button>
-          </div>
+        </div>
+        <!-- 自动播放控制 -->
+        <div class="autoplay-controls">
+          <button class="btn-autoplay" id="btn-autoplay">▶ 自动演示</button>
         </div>
       </div>
     </div>
@@ -213,9 +238,13 @@
             workflow.beastle.cn
           </span>
         </div>
-        <!-- P0: 恢复 workflow 预览 -->
+        <!-- 后台预加载 iframe：用户滚到前一个 section 时静默加载 -->
         <div class="showcase-iframe-wrapper">
-          <iframe src="https://workflow.beastle.cn" title="Workflow 自动化管理平台"></iframe>
+          <div class="iframe-loading" id="iframe-loading">
+            <div class="skeleton-spinner"></div>
+            <span class="skeleton-text">加载中…</span>
+          </div>
+          <iframe id="showcase-iframe" data-src="https://workflow.beastle.cn" title="Workflow 自动化管理平台" style="opacity:0;"></iframe>
         </div>
       </div>
       <a href="https://workflow.beastle.cn" target="_blank" rel="noopener" class="open-link">在新窗口打开完整项目 →</a>

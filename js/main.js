@@ -5,6 +5,7 @@
 
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js';
 import { SVGLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/SVGLoader.min.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.min.js';
 
 // ============================================
 // 1. Three.js C4D 风格 3D 场景（P0: 增强版）
@@ -20,7 +21,7 @@ function initHeroScene() {
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // 性能优化：视网膜屏降级
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.3;
   // P0: 启用阴影
@@ -49,8 +50,8 @@ function initHeroScene() {
   const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
   dirLight.position.set(6, 10, 8);
   dirLight.castShadow = true;
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.mapSize.width = 1024;  // 性能优化：从 2048 降至 1024
+  dirLight.shadow.mapSize.height = 1024;
   dirLight.shadow.camera.near = 0.5;
   dirLight.shadow.camera.far = 50;
   dirLight.shadow.camera.left = -10;
@@ -170,16 +171,24 @@ function initHeroScene() {
   base.castShadow = true;
   laptopGroup.add(base);
 
-  // 键盘面板
+  // 键盘面板（polygonOffset 防止与底座 Z-fighting）
   const kbGeo = new THREE.BoxGeometry(1.8, 0.02, 1.1);
-  const kb = new THREE.Mesh(kbGeo, clayMat('#555566'));
-  kb.position.set(0, 0.06, 0.05);
+  const kbMat = clayMat('#555566');
+  kbMat.polygonOffset = true;
+  kbMat.polygonOffsetFactor = -1;
+  kbMat.polygonOffsetUnits = -1;
+  const kb = new THREE.Mesh(kbGeo, kbMat);
+  kb.position.set(0, 0.07, 0.05); // 略微抬高
   laptopGroup.add(kb);
 
   // 触控板
   const tpGeo = new THREE.BoxGeometry(0.6, 0.01, 0.4);
-  const tp = new THREE.Mesh(tpGeo, clayMat('#666677'));
-  tp.position.set(0, 0.065, 0.45);
+  const tpMat = clayMat('#666677');
+  tpMat.polygonOffset = true;
+  tpMat.polygonOffsetFactor = -2;
+  tpMat.polygonOffsetUnits = -2;
+  const tp = new THREE.Mesh(tpGeo, tpMat);
+  tp.position.set(0, 0.075, 0.45); // 在键盘之上
   laptopGroup.add(tp);
 
   // 屏幕
@@ -190,17 +199,38 @@ function initHeroScene() {
   screen.castShadow = true;
   laptopGroup.add(screen);
 
-  // 屏幕发光面（加入自发光 emissive 效果，成为视觉焦点）
+  // 屏幕播放视频（VideoTexture）
+  const videoEl = document.getElementById('screen-video');
+  let displayMat;
+  if (videoEl) {
+    const videoTexture = new THREE.VideoTexture(videoEl);
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+    videoTexture.colorSpace = THREE.SRGBColorSpace;
+    displayMat = new THREE.MeshStandardMaterial({
+      map: videoTexture,
+      emissive: 0x222222,       // 轻微自发光，模拟屏幕背光
+      emissiveIntensity: 0.3,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+    });
+    // 确保视频播放（autoplay 可能被浏览器策略阻止）
+    videoEl.play().catch(() => {});
+  } else {
+    // 回退：纯色发光屏幕
+    displayMat = new THREE.MeshStandardMaterial({
+      color: 0x110820,
+      emissive: 0x5a2bc0,
+      emissiveIntensity: 0.8,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+    });
+  }
   const displayGeo = new THREE.PlaneGeometry(1.85, 1.15);
-  const displayMat = new THREE.MeshStandardMaterial({
-    color: 0x110820,           // 极暗甚至接近黑的屏幕底色
-    emissive: 0x5a2bc0,        // 赛博紫蓝色呼吸光
-    emissiveIntensity: 0.8,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1,
-  });
   const display = new THREE.Mesh(displayGeo, displayMat);
   display.position.set(0, 0.78, -0.688);
   display.rotation.x = -0.12;
@@ -480,7 +510,7 @@ function initHeroScene() {
     book.castShadow = true;
     booksGroup.add(book);
   }
-  booksGroup.position.set(1.5, 0.55, -3);
+  booksGroup.position.set(2.0, -0.2, -1.2); // 原车位附近，主平台上
   islandGroup.add(booksGroup);
 
   // --- 玻璃球装饰 ---
@@ -524,6 +554,58 @@ function initHeroScene() {
   shadowPlane.receiveShadow = true;
   islandGroup.add(shadowPlane);
 
+  // --- 3D 汽车模型（GLB）---
+  let carModel = null;
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.load('assets/car.glb', (gltf) => {
+    carModel = gltf.scene;
+
+    // 自适应缩放
+    const box = new THREE.Box3().setFromObject(carModel);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetSize = 2.0; // 稍大一点，更有存在感
+    const scale = targetSize / maxDim;
+    carModel.scale.setScalar(scale);
+
+    // 重新计算缩放后的 bounding box，让底部贴地
+    box.setFromObject(carModel);
+    const bottomY = box.min.y;
+    // 放到后方小平台 plat4 (1.5, 0.3, -3) 上，飞翼 logo 正下方
+    carModel.position.set(1.5, -bottomY + 0.45, -3);
+    carModel.rotation.y = Math.PI * 0.6; // 车头朝向镜头
+
+    // 遍历所有 mesh：应用环境贴图、阴影、平滑法线
+    carModel.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+
+        // 平滑法线：消除低模的硬边感
+        if (child.geometry) {
+          child.geometry.computeVertexNormals();
+        }
+
+        if (child.material) {
+          child.material.envMap = envTexture;
+          child.material.envMapIntensity = 0.8;
+          child.material.flatShading = false; // 确保平滑着色
+          child.material.needsUpdate = true;
+        }
+      }
+    });
+
+    islandGroup.add(carModel);
+    console.log('🚗 汽车模型加载成功', {
+      size: `${size.x.toFixed(1)}×${size.y.toFixed(1)}×${size.z.toFixed(1)}`,
+      scale: scale.toFixed(3),
+      bottomY: bottomY.toFixed(3)
+    });
+  }, undefined, (err) => {
+    console.warn('汽车模型加载失败:', err);
+  });
+
   scene.add(islandGroup);
 
   // --- 鼠标视差分层（要点4: 前景-中景3D-背景标题字 三层视差） ---
@@ -550,14 +632,31 @@ function initHeroScene() {
     });
   });
 
-  // --- 动画循环（P0: 修复 rotation 冲突） ---
+  // --- 动画循环（性能优化：仅在 canvas 可见时渲染） ---
   const clock = new THREE.Clock();
+  let heroVisible = true;
+  let animId = null;
+
+  // IntersectionObserver 监测 canvas 可见性
+  const heroObs = new IntersectionObserver(([entry]) => {
+    heroVisible = entry.isIntersecting;
+    if (heroVisible && !animId) {
+      clock.start(); // 恢复计时器
+      animate();
+    }
+  }, { threshold: 0 });
+  heroObs.observe(canvas);
 
   function animate() {
-    requestAnimationFrame(animate);
+    if (!heroVisible) {
+      animId = null;
+      clock.stop(); // 暂停计时器，避免恢复时跳帧
+      return;
+    }
+    animId = requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
-    // 缓慢自转 + 鼠标视差分离处理（取消自动自转，仅跟随鼠标运动）
+    // 缓慢自转 + 鼠标视差分离处理
     const targetRotY = mouseX * 0.25;
     const targetRotX = -mouseY * 0.08;
     islandGroup.rotation.y += (targetRotY - islandGroup.rotation.y) * 0.06;
@@ -573,15 +672,27 @@ function initHeroScene() {
     flame.scale.y = 0.8 + Math.sin(t * 8) * 0.3;
     flame.material.opacity = 0.5 + Math.sin(t * 6) * 0.2;
 
+    // 汽车轻微浮动（基于原始 Y 位置）
+    if (carModel) {
+      const baseY = carModel.userData.baseY ?? carModel.position.y;
+      if (!carModel.userData.baseY) carModel.userData.baseY = baseY;
+      carModel.position.y = baseY + Math.sin(t * 1.0 + 4) * 0.03;
+      carModel.rotation.y = Math.PI * 0.6 + Math.sin(t * 0.5) * 0.03;
+    }
+
     renderer.render(scene, camera);
   }
   animate();
 
-  // --- 窗口适配 ---
+  // --- 窗口适配（性能优化：150ms 防抖） ---
+  let resizeTimer;
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, 150);
   });
 }
 
@@ -599,33 +710,41 @@ function initNavigation() {
   let prevScroll = 0;
 
   // 滚动时：显隐导航 + 进度条 + 高亮当前 section
+  // 性能优化：rAF 节流 + passive 监听
+  let scrollRAF = false;
   window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    const docHeight = document.body.scrollHeight - window.innerHeight;
-    const scrollPercent = (scrollY / docHeight) * 100;
+    if (scrollRAF) return;
+    scrollRAF = true;
+    requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollY / docHeight) * 100;
 
-    // 进度条
-    progress.style.width = scrollPercent + '%';
+      // 进度条
+      progress.style.width = scrollPercent + '%';
 
-    // 滚动方向：下滑隐藏，上滑显示
-    if (scrollY > 80 && scrollY > prevScroll) {
-      nav.classList.add('hidden');
-    } else {
-      nav.classList.remove('hidden');
-    }
-    prevScroll = scrollY;
-
-    // 高亮当前 section
-    let currentSection = '';
-    sections.forEach(sec => {
-      if (scrollY >= sec.offsetTop - 200) {
-        currentSection = sec.id;
+      // 滚动方向：下滑隐藏，上滑显示
+      if (scrollY > 80 && scrollY > prevScroll) {
+        nav.classList.add('hidden');
+      } else {
+        nav.classList.remove('hidden');
       }
+      prevScroll = scrollY;
+
+      // 高亮当前 section
+      let currentSection = '';
+      sections.forEach(sec => {
+        if (scrollY >= sec.offsetTop - 200) {
+          currentSection = sec.id;
+        }
+      });
+      links.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === currentSection);
+      });
+
+      scrollRAF = false;
     });
-    links.forEach(link => {
-      link.classList.toggle('active', link.dataset.section === currentSection);
-    });
-  });
+  }, { passive: true });
 }
 
 // ============================================
@@ -663,42 +782,42 @@ const chatData = [
       { role: 'user', text: '帮我做一个科技感的导航栏，顶部固定，带 logo 和 4 个菜单项，右侧有一个登录按钮。' },
       { role: 'ai', text: '好的！给你一个具有磨砂玻璃效果的顶部导航栏。<code>backdrop-filter: blur(20px)</code> + 柔和阴影，滚动时自动吸附。' },
     ],
-    preview: '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-radius:12px;border:1px solid rgba(0,0,0,0.06);font-family:system-ui;font-size:13px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin: 20px;"><span style="font-weight:700; font-size: 16px;">LOGO</span><div style="display:flex;gap:20px;color:#555; font-weight: 500;"><span>首页</span><span>产品</span><span>关于</span><span>联系</span></div><button style="padding:8px 20px;border-radius:100px;border:none;background:#222;color:white;font-size:13px;cursor:pointer; font-weight: 600;">登录</button></div>'
+    preview: '<div style="width:100%;height:100%;display:flex;flex-direction:column;font-family:system-ui;background:linear-gradient(135deg,#f0f4ff,#e8eeff);padding:0;"><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.04);"><span style="font-weight:800;font-size:17px;background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">TechBrand</span><div style="display:flex;gap:28px;color:#64748b;font-size:14px;font-weight:500;"><span style="color:#1e293b;font-weight:600;">首页</span><span>产品</span><span>关于</span><span>联系</span></div><button style="padding:9px 22px;border-radius:100px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;font-size:13px;cursor:pointer;font-weight:600;box-shadow:0 4px 14px rgba(99,102,241,0.35);">登录</button></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px;"><h2 style="font-size:28px;font-weight:800;margin:0 0 12px;color:#1e293b;">用 AI 构建未来</h2><p style="font-size:14px;color:#64748b;margin:0 0 20px;max-width:360px;">一句话描述你的需求，AI 帮你生成完整网页代码</p><div style="display:flex;gap:12px;"><button style="padding:11px 24px;border:none;border-radius:100px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;font-size:13px;font-weight:600;box-shadow:0 6px 20px rgba(99,102,241,0.3);cursor:pointer;">开始体验</button><button style="padding:11px 24px;border:1px solid #cbd5e1;border-radius:100px;background:white;color:#475569;font-size:13px;font-weight:500;cursor:pointer;">了解更多</button></div></div></div>'
   },
   { // ② 交互设计
     messages: [
       { role: 'user', text: '菜单项鼠标悬停时需要有下划线动画效果，从左到右展开。' },
       { role: 'ai', text: '使用 <code>::after</code> 伪元素 + <code>transform: scaleX(0→1)</code> 就可以实现优雅的下划线展开效果，<code>transform-origin: left</code> 让它从左侧开始。' },
     ],
-    preview: '<style>.demo-link{position:relative;text-decoration:none;color:#555;font-family:system-ui;font-size:15px;font-weight:500;padding:6px 0;}.demo-link::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;background:linear-gradient(90deg, #6b9, #38c);transform:scaleX(0);transform-origin:left;transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);}.demo-link:hover::after{transform:scaleX(1);}</style><div style="display:flex;gap:32px;padding:30px;justify-content:center;margin-top:20px;"><a class="demo-link" href="#">首页</a><a class="demo-link" href="#">产品</a><a class="demo-link" href="#">关于</a></div>'
+    preview: '<style>.demo-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,0.06);font-family:system-ui;box-shadow:0 2px 12px rgba(0,0,0,0.04);}.demo-nav-brand{font-weight:800;font-size:17px;background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}.demo-links{display:flex;gap:32px;}.dlnk{position:relative;text-decoration:none;color:#64748b;font-size:14px;font-weight:500;padding:6px 0;transition:color 0.3s;}.dlnk::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:2.5px;background:linear-gradient(90deg,#6366f1,#a78bfa);transform:scaleX(0);transform-origin:left;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);border-radius:2px;}.dlnk:hover{color:#1e293b;}.dlnk:hover::after{transform:scaleX(1);}.demo-tip{display:flex;align-items:center;gap:8px;padding:10px 16px;margin:20px 24px 0;border-radius:10px;background:linear-gradient(135deg,#eff6ff,#ede9fe);border:1px solid rgba(99,102,241,0.12);font-size:12px;color:#6366f1;}</style><div style="width:100%;height:100%;display:flex;flex-direction:column;background:linear-gradient(135deg,#f0f4ff,#faf5ff);"><div class="demo-nav"><span class="demo-nav-brand">TechBrand</span><div class="demo-links"><a class="dlnk" href="#">首页</a><a class="dlnk" href="#">产品</a><a class="dlnk" href="#">关于</a><a class="dlnk" href="#">联系</a></div></div><div class="demo-tip">💡 将鼠标悬停在菜单项上，查看下划线动画效果</div><div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px;"><div style="text-align:center;"><p style="font-size:14px;color:#94a3b8;margin:0 0 8px;">核心代码</p><code style="font-size:12px;background:#1e293b;color:#a5f3fc;padding:8px 16px;border-radius:8px;display:inline-block;">::after { transform: scaleX(0→1) }</code></div></div></div>'
   },
   { // ③ 动效设计
     messages: [
       { role: 'user', text: '页面内容块在滚动到视口时，需要有从下方淡入的进场动画。' },
       { role: 'ai', text: '使用 <code>IntersectionObserver</code> 监听元素进入视口，然后添加 <code>opacity: 0→1</code> + <code>translateY(30px→0)</code> 的过渡。配合 <code>ease-out-expo</code> 缓动，效果更自然。' },
     ],
-    preview: '<style>@keyframes fUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}.f-card{padding:20px;background:white;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.08);font-family:system-ui;font-size:15px;color:#333;display:flex;align-items:center;gap:12px;}</style><div style="display:flex;flex-direction:column;gap:16px;padding:20px;background:#f8f9fa;border-radius:12px; margin: 20px;"><div class="f-card" style="animation:fUp 0.8s cubic-bezier(0.16,1,0.3,1) both;"><span style="font-size:24px">✨</span> 这个卡片会优雅地从下方淡入</div><div class="f-card" style="animation:fUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s both;"><span style="font-size:24px">🎯</span> 带有延迟的交错效果</div></div>'
+    preview: '<style>@keyframes cardSlideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}.anim-card{padding:16px 20px;background:white;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,0.07);font-family:system-ui;display:flex;align-items:center;gap:14px;border:1px solid rgba(0,0,0,0.04);}.anim-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}.anim-card-text h4{margin:0 0 2px;font-size:14px;font-weight:600;color:#1e293b;}.anim-card-text p{margin:0;font-size:12px;color:#94a3b8;}</style><div style="width:100%;height:100%;display:flex;flex-direction:column;gap:14px;padding:24px;background:linear-gradient(135deg,#f8fafc,#f0f4ff);justify-content:center;font-family:system-ui;"><div class="anim-card" style="animation:cardSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) both;"><div class="anim-icon" style="background:linear-gradient(135deg,#dbeafe,#c7d2fe);">✨</div><div class="anim-card-text"><h4>渐入动画</h4><p>从下方 30px 优雅淡入</p></div></div><div class="anim-card" style="animation:cardSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.12s both;"><div class="anim-icon" style="background:linear-gradient(135deg,#fce7f3,#f5d0fe);">🎯</div><div class="anim-card-text"><h4>交错延迟</h4><p>每个元素延迟 120ms 入场</p></div></div><div class="anim-card" style="animation:cardSlideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.24s both;"><div class="anim-icon" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);">⚡</div><div class="anim-card-text"><h4>缓动曲线</h4><p>ease-out-expo 自然减速</p></div></div></div>'
   },
   { // ④ 反馈与修改
     messages: [
       { role: 'user', text: '这个按钮颜色太深了，改成薄荷绿。圆角再大一点。' },
       { role: 'ai', text: '已调整！按钮背景色改为 <code>oklch(0.78 0.12 160)</code>，圆角从 8px → 16px。现在看起来更柔和了。' },
     ],
-    preview: '<div style="display:flex;gap:24px;align-items:center;padding:30px;font-family:system-ui;justify-content:center; margin-top:20px;"><button style="padding:12px 28px;border-radius:8px;border:none;background:#334155;color:white;font-size:14px;font-weight:500;box-shadow:0 4px 6px rgba(0,0,0,0.1);">修改前</button><span style="font-size:24px;color:#94a3b8;">→</span><button style="padding:12px 28px;border-radius:100px;border:none;background:linear-gradient(135deg, #34d399, #10b981);color:white;font-size:14px;font-weight:600;box-shadow:0 10px 20px rgba(16,185,129,0.3);transition:transform 0.3s;cursor:pointer;" onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'none\'">修改后</button></div>'
+    preview: '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f8fafc,#f0f4ff);font-family:system-ui;padding:24px;"><div style="display:flex;gap:40px;align-items:center;"><div style="text-align:center;"><p style="font-size:11px;color:#94a3b8;margin:0 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">修改前</p><div style="background:white;border-radius:16px;padding:28px 24px;box-shadow:0 4px 16px rgba(0,0,0,0.06);border:1px solid #e2e8f0;"><button style="padding:12px 28px;border-radius:8px;border:none;background:#334155;color:white;font-size:14px;font-weight:500;cursor:default;box-shadow:0 4px 8px rgba(0,0,0,0.1);">深色按钮</button><div style="margin-top:10px;font-size:11px;color:#cbd5e1;"><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:10px;">border-radius: 8px</code></div></div></div><div style="font-size:32px;color:#cbd5e1;animation:pulse 2s infinite;">→</div><div style="text-align:center;"><p style="font-size:11px;color:#10b981;margin:0 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">修改后 ✓</p><div style="background:white;border-radius:16px;padding:28px 24px;box-shadow:0 4px 16px rgba(16,185,129,0.1);border:1px solid #d1fae5;"><button style="padding:12px 28px;border-radius:100px;border:none;background:linear-gradient(135deg,#34d399,#10b981);color:white;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(16,185,129,0.3);cursor:pointer;">薄荷绿按钮</button><div style="margin-top:10px;font-size:11px;color:#6ee7b7;"><code style="background:#ecfdf5;padding:2px 6px;border-radius:4px;font-size:10px;color:#059669;">border-radius: 100px</code></div></div></div></div></div><style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}</style>'
   },
   { // ⑤ 占位图替换
     messages: [
       { role: 'user', text: '把 Hero 区域的占位图替换成一张真实的产品图，可以用 Unsplash 的图片。' },
       { role: 'ai', text: '直接在 <code>src</code> 属性中使用 Unsplash 的随机图片 API，或者上传图片到图床（如 SM.MS），然后替换 URL 即可。' },
     ],
-    preview: '<div style="display:flex;gap:20px;padding:30px;font-family:system-ui;justify-content:center;align-items:center;"><div style="width:160px;height:100px;background:#e2e8f0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#64748b;font-weight:500;border:2px dashed #cbd5e1;">占位图</div><span style="display:flex;align-items:center;font-size:24px;color:#94a3b8;">→</span><div style="width:160px;height:100px;border-radius:12px;background:url(\'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop\') center/cover;box-shadow:0 10px 20px rgba(0,0,0,0.15);"></div></div>'
+    preview: '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f8fafc,#faf5ff);font-family:system-ui;padding:24px;gap:32px;"><div style="text-align:center;"><p style="font-size:11px;color:#94a3b8;margin:0 0 10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">占位图</p><div style="width:180px;height:120px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:16px;display:flex;align-items:center;justify-content:center;border:2px dashed #cbd5e1;"><div style="text-align:center;"><span style="font-size:28px;display:block;margin-bottom:4px;">🖼️</span><span style="font-size:11px;color:#94a3b8;">400×300</span></div></div></div><div style="font-size:24px;color:#cbd5e1;">→</div><div style="text-align:center;"><p style="font-size:11px;color:#8b5cf6;margin:0 0 10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">真实图片 ✓</p><div style="width:180px;height:120px;border-radius:16px;background:url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop) center/cover;box-shadow:0 12px 28px rgba(139,92,246,0.2);border:2px solid rgba(139,92,246,0.15);"></div></div></div>'
   },
   { // ⑥ 部署上线
     messages: [
       { role: 'user', text: '代码写好了，怎么部署到网上？' },
       { role: 'ai', text: '最简单的方式：推送代码到 GitHub → 去 Vercel.com 导入仓库 → 自动构建部署 → 获得一个 .vercel.app 的免费域名。全程 3 分钟。' },
     ],
-    preview: '<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;font-family:system-ui;font-size:14px;font-weight:500;"><div style="padding:12px 16px;background:#f1f5f9;border-radius:10px;color:#475569;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02);">📁 代码</div><span style="color:#cbd5e1;">→</span><div style="padding:12px 16px;background:#f8fafc;border-radius:10px;color:#0f172a;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid #e2e8f0;">🐙 GitHub</div><span style="color:#cbd5e1;">→</span><div style="padding:12px 16px;background:black;color:white;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,0.2);">▲ Vercel 构建</div></div>'
+    preview: '<style>@keyframes deployPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.3)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}.deploy-node{padding:14px 18px;border-radius:14px;font-family:system-ui;font-size:13px;font-weight:600;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04);transition:transform 0.3s;}.deploy-arrow{color:#cbd5e1;font-size:18px;display:flex;align-items:center;}</style><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f8fafc,#f0fdf4);font-family:system-ui;padding:24px;"><div style="display:flex;align-items:center;gap:12px;"><div class="deploy-node" style="background:#f8fafc;color:#475569;border-color:#e2e8f0;">📁 本地代码</div><div class="deploy-arrow">→</div><div class="deploy-node" style="background:#0d1117;color:white;border-color:#30363d;">🐙 GitHub</div><div class="deploy-arrow">→</div><div class="deploy-node" style="background:black;color:white;">▲ Vercel<br><span style="font-weight:400;font-size:11px;color:#a1a1aa;">自动构建</span></div><div class="deploy-arrow">→</div><div class="deploy-node" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;border-color:#6ee7b7;animation:deployPulse 2s infinite;">🎉 上线成功<br><span style="font-weight:400;font-size:10px;color:#059669;">your-app.vercel.app</span></div></div></div>'
   }
 ];
 
@@ -794,14 +913,14 @@ function initChatDemo() {
 
       // P2: preview fade out
       previewEl.classList.add('fading');
-      previewEl.innerHTML = '<span class="preview-box-label">预览效果</span>';
+      previewEl.innerHTML = '';
 
       let msgIdx = 0;
 
       function showNextMessage() {
         if (msgIdx >= data.messages.length) {
           // 所有消息显示完毕，渲染预览
-          previewEl.innerHTML = '<span class="preview-box-label">预览效果</span>' + data.preview;
+          previewEl.innerHTML = data.preview;
           previewEl.classList.remove('fading');
           resolve();
           return;
@@ -912,7 +1031,7 @@ function initScrollAnimations() {
             ease: 'expo.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
+              start: 'top 98%', // 更早触发，避免 snap 后空白
               once: true,
             },
           }
@@ -951,6 +1070,35 @@ function fallbackObserver(elements) {
 }
 
 // ============================================
+// 7. Showcase iframe 预加载（"穿石缝"模式：在前一个 section 静默加载）
+// ============================================
+function initShowcaseIframe() {
+  const iframe = document.getElementById('showcase-iframe');
+  const loading = document.getElementById('iframe-loading');
+  const trigger = document.getElementById('coding'); // 前一个 section 作为触发点
+
+  if (!iframe || !trigger) return;
+
+  // 监测 coding section 可见性——用户到这里时静默注入 iframe src
+  const preloadObs = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && !iframe.src) {
+      iframe.src = iframe.dataset.src;
+
+      // 加载完成后：隐藏骨架屏，淡入 iframe
+      iframe.addEventListener('load', () => {
+        if (loading) loading.style.display = 'none';
+        iframe.style.opacity = '1';
+        iframe.style.transition = 'opacity 0.5s var(--ease-out-expo)';
+      }, { once: true });
+
+      preloadObs.disconnect(); // 只需触发一次
+    }
+  }, { threshold: 0.1 });
+
+  preloadObs.observe(trigger);
+}
+
+// ============================================
 // 初始化（P0-bug: 错误边界）
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -959,5 +1107,6 @@ document.addEventListener('DOMContentLoaded', () => {
   try { initNavigation(); } catch (e) { console.error('导航初始化失败:', e); }
   try { initToolTabs(); } catch (e) { console.error('Tab 切换初始化失败:', e); }
   try { initChatDemo(); } catch (e) { console.error('对话演示初始化失败:', e); }
+  try { initShowcaseIframe(); } catch (e) { console.error('Showcase iframe 初始化失败:', e); }
   try { initScrollAnimations(); } catch (e) { console.error('滚动动画初始化失败:', e); }
 });
