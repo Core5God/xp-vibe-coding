@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vibe Coding 建站到上线 × XPENG 内部分享</title>
   <meta name="description" content="用 AI 写代码建站，从灵感到上线的全流程培训">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- 性能优化：字体异步加载，避免阻塞渲染 -->
@@ -37,6 +37,11 @@
     <div class="nav-progress" id="nav-progress"></div>
   </nav>
 
+  <!-- 右上角独立角标，不干扰导航栏 -->
+  <div class="page-badge" id="page-badge">
+    <span class="page-badge-text">XPENG 内部分享</span>
+  </div>
+
   <!-- ====== Hero Section ====== -->
   <section id="hero" class="section">
     <!-- 笔记本屏幕视频源（隐藏，Three.js VideoTexture 使用） -->
@@ -47,9 +52,17 @@
     <!-- 背景大字：参考 luni.app，放在 3D 和内容之间，渐隐效果 -->
     <div class="hero-bg-title" aria-hidden="true">Vibe Coding</div>
     <div class="hero-content">
-      <span class="hero-badge">XPENG 内部分享</span>
-      <p class="hero-subtitle">从灵感到上线，用 AI 建你的第一个网站</p>
-      <a href="#tools" class="hero-cta">开始探索 ↓</a>
+      <h1 class="hero-title">
+        <img src="assets/hero-title.svg" alt="从灵感到上线" class="hero-title-svg">
+      </h1>
+      <p class="hero-subtitle">全程 Vibe Coding 实战演示，带你零代码完成整站开发</p>
+      <a href="#tools" class="hero-btn-primary">
+        <span>开始探索</span>
+        <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </a>
     </div>
   </section>
 
@@ -60,102 +73,101 @@
       <h2 class="section-title fade-up">工具的选择</h2>
       <p class="section-desc fade-up delay-1">选对工具，事半功倍。以下是我们推荐的 AI Coding 工具栈。</p>
       <div class="tools-grid">
-        <!-- AI Studio 主推卡 -->
-        <div class="glass-card tool-card-main fade-up delay-1">
-          <span class="tool-badge">⭐ 推荐</span>
-          <h3 class="card-title">Google AI Studio</h3>
-          <p class="card-desc">强大的 AI 全栈开发平台。100 元学生会员 Pro/年，性价比极高。</p>
-
-          <!-- 功能 Tab 切换 -->
-          <div class="feature-tabs">
-            <button class="feature-tab active" data-tab="build">Build</button>
-            <button class="feature-tab" data-tab="prompts">Prompts</button>
-            <button class="feature-tab" data-tab="deploy">Deploy</button>
+        <!-- 灵犀主推卡：全宽横幅 -->
+        <div class="lingxi-hero fade-up delay-1">
+          <span class="lingxi-corner-badge">⭐ 主推</span>
+          <div class="lingxi-hero-content">
+            <div class="lingxi-hero-title">
+              <img src="assets/lingxi-logo.png" alt="灵犀" class="lingxi-logo-img">
+              <div>
+                <h3>灵犀 AI 编程</h3>
+                <p class="lingxi-subtitle">Powered by 数据智能中心</p>
+              </div>
+            </div>
+            <p class="lingxi-hero-desc">小鹏内部 AI IDE 平台，非研发同学也能轻松上手的保姆级开发环境。基于公司 GitLab 仓库，AI 自动生成并提交代码，零配置即可建站。</p>
+            <div class="lingxi-features">
+              <div class="lingxi-feature-item">
+                <span class="lingxi-feature-icon">🌐</span>
+                <span>Web 端在线编码</span>
+              </div>
+              <div class="lingxi-feature-item">
+                <span class="lingxi-feature-icon">🔌</span>
+                <span>VS Code 插件端</span>
+              </div>
+              <div class="lingxi-feature-item">
+                <span class="lingxi-feature-icon">🏢</span>
+                <span>内网直连 · 零配置</span>
+              </div>
+              <div class="lingxi-feature-item">
+                <span class="lingxi-feature-icon">🤖</span>
+                <span>AI 自动生成代码</span>
+              </div>
+            </div>
+            <div class="lingxi-cta-row">
+              <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="tool-cta-link">
+                打开灵犀工作台 →
+              </a>
+              <button type="button" class="tool-cta-link tool-cta-link--outline" onclick="openGuideModal('guideModal')">
+                📖 使用攻略
+              </button>
+            </div>
           </div>
-          <div class="feature-content">
-            <div class="feature-panel active" id="panel-build">
-              <h4 class="panel-title">🏗️ Build — 可视化建站</h4>
-              <p class="card-desc">直接在浏览器中用自然语言描述你的需求，AI 自动生成完整的网页代码。支持实时预览和迭代修改。</p>
-              <div class="feature-points">
-                <span class="feature-point">💬 自然语言驱动</span>
-                <span class="feature-point">⚡ 实时预览</span>
-                <span class="feature-point">🔄 迭代修改</span>
-              </div>
-              <div class="panel-screenshot">
-                <div class="mock-ui mock-ui--build">
-                  <div class="mock-card">
-                    <div class="mock-header">
-                      <span class="mock-dot mock-dot--green"></span>
-                      <span class="mock-label">AI Studio Build</span>
-                    </div>
-                    <div class="mock-terminal">
-                      &gt; 帮我创建一个带导航栏的着陆页...<br>
-                      <span class="mock-success">✓ 已生成 index.html, style.css</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="feature-panel" id="panel-prompts">
-              <h4 class="panel-title">💬 Prompts — 智能提示</h4>
-              <p class="card-desc">内置多种提示词模板，帮你快速生成高质量的页面。从简单的着陆页到复杂的数据看板，一句话搞定。</p>
-              <div class="feature-points">
-                <span class="feature-point">📋 提示词模板</span>
-                <span class="feature-point">🎯 场景化推荐</span>
-                <span class="feature-point">🧠 上下文记忆</span>
-              </div>
-              <div class="panel-screenshot">
-                <div class="mock-ui mock-ui--prompts">
-                  <div class="mock-prompt">"做一个暗黑风格的 Dashboard..."</div>
-                  <div class="mock-prompt mock-prompt--dim">"创建一个电商产品展示页..."</div>
-                  <div class="mock-prompt mock-prompt--dimmer">"设计一个 SaaS 定价页面..."</div>
-                </div>
-              </div>
-            </div>
-            <div class="feature-panel" id="panel-deploy">
-              <h4 class="panel-title">🚀 Deploy — 一键部署</h4>
-              <p class="card-desc">代码生成后，一键部署到 Google Cloud 或导出到本地。支持自定义域名绑定。</p>
-              <div class="feature-points">
-                <span class="feature-point">☁️ Google Cloud</span>
-                <span class="feature-point">📦 导出代码</span>
-                <span class="feature-point">🌐 自定义域名</span>
-              </div>
-              <div class="panel-screenshot">
-                <div class="mock-ui mock-ui--deploy">
-                  <div class="mock-card">
-                    <div class="mock-emoji">🎉</div>
-                    <div class="mock-label mock-label--bold">部署成功！</div>
-                    <div class="mock-url">https://your-app.web.app</div>
-                  </div>
-                </div>
-              </div>
+          <div class="lingxi-hero-visual">
+            <!-- 四阶段流程竖排 -->
+            <div class="lingxi-steps-vertical">
+              <span class="lingxi-steps-title">上手四步走</span>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">1</span><span>GitLab 准备</span></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">2</span><span>Web 端初始化</span></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">3</span><span>IDE 插件端</span></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">4</span><span>实战开发</span></div>
             </div>
           </div>
         </div>
 
-        <!-- Antigravity -->
-        <div class="glass-card tool-card-sub fade-up delay-2">
-          <div class="tool-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
-            <span>Antigravity</span>
+        <!-- 其他选择：三列等宽 -->
+        <div class="tools-others-label fade-up delay-2">其他选择</div>
+        <div class="tools-others fade-up delay-2">
+          <!-- Google AI Studio -->
+          <div class="glass-card tool-card-sub">
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              <span>Google AI Studio</span>
+            </div>
+            <p class="card-desc--sm">AI 全栈开发平台，集 Build / Prompts / Deploy 于一体。</p>
+            <div class="sub-card-features">
+              <span class="tool-killer">🏗️ 可视化建站</span>
+              <span class="tool-killer">💬 智能提示</span>
+              <span class="tool-killer">🚀 一键部署</span>
+            </div>
+            <button type="button" class="sub-card-link" onclick="openGuideModal('gasModal')">📖 使用攻略 →</button>
           </div>
-          <p class="card-desc--sm">VS Code 原生 AI 编码助手，适合有一定编码基础的开发者。强大的代码理解和重构能力。</p>
-          <div class="sub-card-features">
-            <span class="tool-killer">🔥 VS Code 深度集成</span>
-            <span class="tool-killer">📂 多文件编辑</span>
-          </div>
-        </div>
 
-        <!-- Codex -->
-        <div class="glass-card tool-card-sub fade-up delay-3">
-          <div class="tool-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            <span>Codex</span>
+          <!-- Antigravity -->
+          <div class="glass-card tool-card-sub">
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+              <span>Antigravity</span>
+            </div>
+            <p class="card-desc--sm">VS Code 原生 AI 编码助手，适合有编码基础的开发者。</p>
+            <div class="sub-card-features">
+              <span class="tool-killer">🔥 VS Code 深度集成</span>
+              <span class="tool-killer">📂 多文件编辑</span>
+            </div>
+            <a href="https://antigravity.google/" target="_blank" rel="noopener" class="sub-card-link">🔗 VS Code 插件 →</a>
           </div>
-          <p class="card-desc--sm">OpenAI 的代码生成引擎，支持多种编程语言。可通过 API 集成到自有工作流中。</p>
-          <div class="sub-card-features">
-            <span class="tool-killer">🧩 API 灵活集成</span>
-            <span class="tool-killer">🌍 多语言支持</span>
+
+          <!-- Codex -->
+          <div class="glass-card tool-card-sub">
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>Codex</span>
+            </div>
+            <p class="card-desc--sm">OpenAI 的代码生成引擎，支持多种编程语言。</p>
+            <div class="sub-card-features">
+              <span class="tool-killer">🧩 API 灵活集成</span>
+              <span class="tool-killer">🌍 多语言支持</span>
+            </div>
+            <a href="https://openai.com/index/codex/" target="_blank" rel="noopener" class="sub-card-link">🔗 了解更多 →</a>
           </div>
         </div>
       </div>
@@ -255,8 +267,8 @@
   <section id="deploy" class="section">
     <span class="section-bg-text">Deploy</span>
     <div class="section-inner">
-      <h2 class="section-title section-title--center fade-up">域名注册 & 部署上线</h2>
-      <p class="section-desc section-desc--center fade-up delay-1">从购买域名到网站上线的完整阿里云流程。</p>
+      <h2 class="section-title fade-up">域名注册 & 部署上线</h2>
+      <p class="section-desc fade-up delay-1">从购买域名到网站上线的完整阿里云流程。<a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb?from=from_copylink" target="_blank" rel="noopener" class="section-desc-link">📖 查看完整攻略</a></p>
 
       <div class="deploy-flow fade-up delay-2">
         <!-- 步骤 1 -->
@@ -326,22 +338,46 @@
   <section id="closing" class="section section-auto">
     <span class="section-bg-text">Summary</span>
     <div class="section-inner">
+      <h2 class="section-title fade-up">培训总结</h2>
+      <p class="section-desc fade-up delay-1">回顾要点，领取作业，收藏资料。</p>
       <div class="closing-grid">
         <!-- 实战作业 -->
         <div class="glass-card fade-up">
           <h3>🎯 实战作业</h3>
-          <p class="challenge-title">用 AI Studio 做一个你自己的个人网站</p>
+          <p class="challenge-title">在灵犀平台做一个你自己的个人网站</p>
           <p class="challenge-desc">不限主题，可以是个人作品集、团队介绍页、兴趣爱好展示…… 下周五前提交链接。</p>
+          <div class="challenge-meta">
+            <span>📅 截止：下周五 18:00</span>
+            <span>📬 提交：飞书群内发链接</span>
+            <span>⭐ 优秀作品将获得展示机会</span>
+          </div>
+          <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="tool-cta-link" style="margin-top: var(--space-sm);">
+            打开灵犀工作台 →
+          </a>
         </div>
 
         <!-- 培训资料 -->
         <div class="glass-card fade-up delay-1">
           <h3>📚 培训资料</h3>
-          <ul class="resource-list">
-            <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank">📄 本次培训完整文档</a></li>
-            <li><a href="https://aistudio.google.com" target="_blank">🤖 Google AI Studio</a></li>
-            <li><a href="https://workflow.beastle.cn" target="_blank">🌐 项目案例：Workflow</a></li>
-          </ul>
+          <div class="resource-grid">
+            <div class="resource-col">
+              <h4 class="resource-col-title">📄 文档资料</h4>
+              <ul class="resource-list">
+                <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank">本次培训完整文档（飞书）</a></li>
+                <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb?from=from_copylink" target="_blank">域名部署完整攻略</a></li>
+              </ul>
+            </div>
+            <div class="resource-col">
+              <h4 class="resource-col-title">🔧 工具地址</h4>
+              <ul class="resource-list">
+                <li><a href="https://code.x-peng.com/workbench/" target="_blank">灵犀 AI 编程（主推）</a></li>
+                <li><button type="button" class="resource-modal-btn" onclick="openGuideModal('guideModal')">灵犀使用攻略</button></li>
+                <li><a href="https://aistudio.google.com" target="_blank">Google AI Studio</a></li>
+                <li><button type="button" class="resource-modal-btn" onclick="openGuideModal('gasModal')">Google AI Studio 使用攻略</button></li>
+                <li><a href="https://workflow.beastle.cn" target="_blank">项目案例：Workflow</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -349,12 +385,18 @@
 
   <!-- ====== Footer ====== -->
   <footer class="site-footer">
-    <div class="divider"></div>
-    <p>XPENG · Vibe Coding 内部分享</p>
+    <div class="footer-divider"></div>
+    <!-- 小鹏飞翼 Logo -->
+    <svg class="footer-logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+      <!-- 小鹏飞翼 -->
+      <path d="M100 8 C85 8 55 22 30 40 L100 28 L170 40 C145 22 115 8 100 8Z" fill="oklch(0.50 0.10 280)" opacity="0.6"/>
+      <path d="M100 28 L30 40 C50 38 75 32 100 24 C125 32 150 38 170 40 Z" fill="oklch(0.60 0.14 280)" opacity="0.4"/>
+      <!-- XPENG 文字 -->
+      <text x="100" y="55" text-anchor="middle" font-family="var(--font-display)" font-size="10" font-weight="600" fill="oklch(0.50 0.06 280)" letter-spacing="3">XPENG</text>
+    </svg>
+    <p class="footer-brand">XPENG · Vibe Coding 内部分享</p>
+    <p class="footer-copy">© 2025 小鹏汽车 · 数据智能中心</p>
   </footer>
-
-  <!-- ====== 右下角悬浮角标 ====== -->
-  <div class="floating-badge">@颜宇骁 分享</div>
 
   <!-- ====== Scripts ====== -->
   <!-- GSAP + ScrollTrigger -->
@@ -362,5 +404,48 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <!-- 主逻辑 -->
   <script src="js/main.js" type="module"></script>
+  <!-- 灵犀使用攻略弹窗 -->
+  <div id="guideModal" class="guide-modal" onclick="if(event.target===this)closeGuideModal('guideModal')">
+    <div class="guide-modal-container">
+      <div class="guide-modal-header">
+        <span>📖 灵犀 AI 编程 · 使用攻略</span>
+        <div class="guide-modal-actions">
+          <a href="https://code-help.beastle.cn/" target="_blank" rel="noopener" class="guide-modal-external">↗ 新窗口打开</a>
+          <button class="guide-modal-close" onclick="closeGuideModal('guideModal')">&times;</button>
+        </div>
+      </div>
+      <iframe src="about:blank" data-src="https://code-help.beastle.cn/" class="guide-modal-iframe"></iframe>
+    </div>
+  </div>
+
+  <!-- Google AI Studio 使用攻略弹窗 -->
+  <div id="gasModal" class="guide-modal" onclick="if(event.target===this)closeGuideModal('gasModal')">
+    <div class="guide-modal-container">
+      <div class="guide-modal-header">
+        <span>📖 Google AI Studio · 使用攻略</span>
+        <div class="guide-modal-actions">
+          <a href="https://gas.beastle.cn/" target="_blank" rel="noopener" class="guide-modal-external">↗ 新窗口打开</a>
+          <button class="guide-modal-close" onclick="closeGuideModal('gasModal')">&times;</button>
+        </div>
+      </div>
+      <iframe src="about:blank" data-src="https://gas.beastle.cn/" class="guide-modal-iframe"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // 通用弹窗开关
+    function openGuideModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add('active');
+      document.body.classList.add('modal-open');
+      const iframe = m.querySelector('iframe');
+      if (iframe.src === 'about:blank') iframe.src = iframe.dataset.src;
+    }
+    function closeGuideModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.classList.remove('modal-open');
+    }
+  </script>
+
 </body>
 </html>
