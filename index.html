@@ -55,7 +55,7 @@
       <h1 class="hero-title">
         <img src="assets/hero-title.svg" alt="从灵感到上线" class="hero-title-svg">
       </h1>
-      <p class="hero-subtitle">从灵感到上线。零代码，打造完整网站。</p>
+      <p class="hero-subtitle">从灵感到上线。<span class="gradient-flow-text">零代码，打造完整网站。</span></p>
       <a href="#tools" class="hero-btn-primary">
         <span>开始探索</span>
         <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,12 +70,14 @@
   <section id="tools" class="section">
     <span class="section-bg-text">Tools</span>
     <div class="section-inner">
-      <h2 class="section-title fade-up">AI 生产力，尽在掌握</h2>
-      <p class="section-desc fade-up delay-1">精心挑选的 AI 编程工具栈。无论内网外网，由你掌控。</p>
+      <h2 class="section-title blur-reveal">AI 生产力，尽在掌握</h2>
+      <p class="section-desc blur-reveal delay-1">精心挑选的 AI 编程工具栈。无论内网外网，由你掌控。</p>
       <div class="tools-grid">
         <!-- 灵犀主推卡：全宽横幅 -->
         <div class="lingxi-hero fade-up delay-1">
-          <span class="lingxi-corner-badge">⭐ 主推</span>
+          <div class="lingxi-badge-container">
+            <span class="lingxi-corner-badge">⭐ 主推</span>
+          </div>
           <div class="lingxi-hero-content">
             <div class="lingxi-hero-title">
               <img src="assets/lingxi-logo.png" alt="灵犀" class="lingxi-logo-img">
@@ -128,7 +130,7 @@
         <div class="tools-others-label fade-up delay-2">其他选择</div>
         <div class="tools-others fade-up delay-2">
           <!-- Google AI Studio -->
-          <div class="glass-card tool-card-sub">
+          <div class="glass-card tool-card-sub spotlight-card">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
               <span>Google AI Studio</span>
@@ -180,8 +182,15 @@
   <section id="coding" class="section">
     <span class="section-bg-text">Communicate</span>
     <div class="section-inner">
-      <h2 class="section-title fade-up">协作的艺术</h2>
-      <p class="section-desc fade-up delay-1">与 AI 结对编程，沟通胜过技术。6 个核心步骤，助你轻松驾驭全局。</p>
+      <h2 class="section-title blur-reveal">协作的艺术</h2>
+      <p class="section-desc blur-reveal delay-1">与 AI 结对编程，沟通胜过技术。6 个核心步骤，助你轻松驾驭全局。</p>
+      <!-- Count Up 数据条 -->
+      <div class="count-up-row blur-reveal delay-2">
+        <div class="count-up-item"><span class="count-up-value" data-count-target="3">0</span><div class="count-up-label">AI 工具</div></div>
+        <div class="count-up-item"><span class="count-up-value" data-count-target="6">0</span><div class="count-up-label">核心步骤</div></div>
+        <div class="count-up-item"><span class="count-up-value" data-count-target="4">0</span><div class="count-up-label">部署环节</div></div>
+        <div class="count-up-item"><span class="count-up-value" data-count-target="1">0</span><div class="count-up-label">次发布</div></div>
+      </div>
 
       <div class="coding-layout fade-up delay-2">
         <!-- 左侧步骤导航 -->
@@ -233,8 +242,8 @@
   <section id="showcase" class="section">
     <span class="section-bg-text">Showcase</span>
     <div class="section-inner">
-      <h2 class="section-title fade-up">所见即所得</h2>
-      <p class="section-desc fade-up delay-1">体验由 Vibe 驱动的真实项目。不仅是构想，更是现实。</p>
+      <h2 class="section-title blur-reveal">所见即所得</h2>
+      <p class="section-desc blur-reveal delay-1">体验由 Vibe 驱动的真实项目。不仅是构想，更是现实。</p>
 
       <div class="browser-frame fade-up delay-2">
         <div class="browser-bar">
@@ -269,8 +278,8 @@
   <section id="deploy" class="section">
     <span class="section-bg-text">Deploy</span>
     <div class="section-inner">
-      <h2 class="section-title fade-up">从构想到上线，一气呵成</h2>
-      <p class="section-desc fade-up delay-1">从域名注册到全球部署，完整流程指南。<a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb?from=from_copylink" target="_blank" rel="noopener" class="section-desc-link">📖 查看完整攻略</a></p>
+      <h2 class="section-title blur-reveal">从构想到上线，一气呵成</h2>
+      <p class="section-desc blur-reveal delay-1">从域名注册到全球部署，完整流程指南。<a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb?from=from_copylink" target="_blank" rel="noopener" class="section-desc-link">📖 查看完整攻略</a></p>
 
       <div class="deploy-flow fade-up delay-2">
         <!-- 步骤 1 -->
@@ -336,51 +345,64 @@
     </div>
   </section>
 
-  <!-- ====== Section 5: 下一步 ====== -->
+  <!-- ====== Section 5: 下一步 — Bento Grid ====== -->
   <section id="closing" class="section section-auto">
     <span class="section-bg-text">Summary</span>
     <div class="section-inner">
-      <h2 class="section-title fade-up">下一步，由你开启</h2>
-      <p class="section-desc fade-up delay-1">巩固所学，完成实战，探索更多可能。</p>
-      <div class="closing-grid">
-        <!-- 实战作业 -->
-        <div class="glass-card fade-up">
-          <h3>🎯 开启你的实战</h3>
-          <p class="challenge-title">打造你的专属网站。</p>
-          <p class="challenge-desc">主题不限，尽情发挥。无论是个人作品集、团队介绍还是核心热爱。<br>下周五 18:00 前完成提交。</p>
-          <div class="challenge-meta">
-            <span>📅 截止：下周五 18:00</span>
-            <span>📬 提交：飞书群内发链接</span>
-            <span>⭐ 优秀作品将获得展示机会</span>
+      <h2 class="section-title blur-reveal">下一步，由你开启</h2>
+      <p class="section-desc blur-reveal delay-1">巩固所学，完成实战，探索更多可能。</p>
+
+      <div class="bento-grid fade-up delay-2">
+        <!-- 主 CTA：实战作业（大卡横跨 2 列） -->
+        <div class="bento-card bento-card--hero spotlight-card">
+          <div class="bento-card-inner">
+            <span class="bento-icon">🎯</span>
+            <h3 class="bento-card-title">开启你的实战</h3>
+            <p class="bento-card-desc">打造你的专属网站。主题不限，尽情发挥。<br>无论是个人作品集、团队介绍还是核心热爱。</p>
+            <div class="bento-meta">
+              <span>📅 截止：下周五 18:00</span>
+              <span>📬 提交：飞书群内发链接</span>
+              <span>⭐ 优秀作品获展示机会</span>
+            </div>
+            <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="bento-cta">打开灵犀工作台 →</a>
           </div>
-          <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="tool-cta-link" style="margin-top: var(--space-sm);">
-            打开灵犀工作台 →
-          </a>
         </div>
 
-        <!-- 培训资料 -->
-        <div class="glass-card fade-up delay-1">
-          <h3>📚 核心资源</h3>
-          <div class="resource-grid">
-            <div class="resource-col">
-              <h4 class="resource-col-title">📄 文档资料</h4>
-              <ul class="resource-list">
-                <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank">本次培训完整文档（飞书）</a></li>
-                <li><a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb?from=from_copylink" target="_blank">域名部署完整攻略</a></li>
-              </ul>
-            </div>
-            <div class="resource-col">
-              <h4 class="resource-col-title">🔧 工具地址</h4>
-              <ul class="resource-list">
-                <li><a href="https://code.x-peng.com/workbench/" target="_blank">灵犀 AI 编程（主推）</a></li>
-                <li><button type="button" class="resource-modal-btn" onclick="openGuideModal('guideModal')">灵犀使用攻略</button></li>
-                <li><a href="https://aistudio.google.com" target="_blank">Google AI Studio</a></li>
-                <li><button type="button" class="resource-modal-btn" onclick="openGuideModal('gasModal')">Google AI Studio 使用攻略</button></li>
-                <li><a href="https://workflow.beastle.cn" target="_blank">项目案例：Workflow</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <!-- 工具入口卡片 -->
+        <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="bento-card bento-card--tool spotlight-card">
+          <span class="bento-tool-icon">🔮</span>
+          <span class="bento-tool-name">灵犀 AI 编程</span>
+          <span class="bento-tool-tag">主推</span>
+        </a>
+
+        <a href="https://aistudio.google.com" target="_blank" rel="noopener" class="bento-card bento-card--tool spotlight-card">
+          <span class="bento-tool-icon">✦</span>
+          <span class="bento-tool-name">Google AI Studio</span>
+        </a>
+
+        <a href="https://workflow.beastle.cn" target="_blank" rel="noopener" class="bento-card bento-card--tool spotlight-card">
+          <span class="bento-tool-icon">🌐</span>
+          <span class="bento-tool-name">项目案例：Workflow</span>
+        </a>
+
+        <!-- 教程攻略卡片 -->
+        <a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank" rel="noopener" class="bento-card bento-card--doc spotlight-card">
+          <span class="bento-doc-icon">📄</span>
+          <span class="bento-doc-title">培训完整文档</span>
+          <span class="bento-doc-sub">飞书在线文档</span>
+        </a>
+
+        <button type="button" class="bento-card bento-card--doc spotlight-card" onclick="openGuideModal('guideModal')">
+          <span class="bento-doc-icon">📖</span>
+          <span class="bento-doc-title">灵犀使用攻略</span>
+          <span class="bento-doc-sub">新手上路指南</span>
+        </button>
+
+        <button type="button" class="bento-card bento-card--doc spotlight-card" onclick="openGuideModal('gasModal')">
+          <span class="bento-doc-icon">📖</span>
+          <span class="bento-doc-title">GAS 使用攻略</span>
+          <span class="bento-doc-sub">Google AI Studio</span>
+        </button>
       </div>
     </div>
   </section>
@@ -388,15 +410,13 @@
   <!-- ====== Footer ====== -->
   <footer class="site-footer">
     <div class="footer-divider"></div>
-    <!-- 小鹏飞翼 Logo -->
-    <svg class="footer-logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-      <!-- 小鹏飞翼 -->
-      <path d="M100 8 C85 8 55 22 30 40 L100 28 L170 40 C145 22 115 8 100 8Z" fill="oklch(0.50 0.10 280)" opacity="0.6"/>
-      <path d="M100 28 L30 40 C50 38 75 32 100 24 C125 32 150 38 170 40 Z" fill="oklch(0.60 0.14 280)" opacity="0.4"/>
-      <!-- XPENG 文字 -->
-      <text x="100" y="55" text-anchor="middle" font-family="var(--font-display)" font-size="10" font-weight="600" fill="oklch(0.50 0.06 280)" letter-spacing="3">XPENG</text>
-    </svg>
-    <p class="footer-brand">XPENG · Vibe Coding 内部分享</p>
+    <a href="#hero" class="back-to-top" aria-label="回到顶部">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+        <line x1="12" y1="19" x2="12" y2="5"></line>
+        <polyline points="5 12 12 5 19 12"></polyline>
+      </svg>
+      <span>回到顶部</span>
+    </a>
     <p class="footer-copy">© 2025 小鹏汽车 · 数据智能中心</p>
   </footer>
 
@@ -406,6 +426,8 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <!-- 主逻辑 -->
   <script src="js/main.js" type="module"></script>
+  <!-- 全局点击火花效果 -->
+  <script src="js/click-spark.js" defer></script>
   <!-- 灵犀使用攻略弹窗 -->
   <div id="guideModal" class="guide-modal" onclick="if(event.target===this)closeGuideModal('guideModal')">
     <div class="guide-modal-container">

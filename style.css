@@ -549,17 +549,28 @@ body {
   display: grid;
   grid-template-columns: 1fr 240px;
   gap: var(--space-lg);
-  background: linear-gradient(135deg, oklch(0.98 0.02 285) 0%, oklch(0.94 0.06 285 / 0.6) 100%);
+  /* 背景必须完全不透明——遮住背后 z-index:-1 的 border-glow 锥形渐变 */
+  background: linear-gradient(135deg, oklch(0.98 0.02 285) 0%, oklch(0.96 0.04 285) 100%);
   border: 1px solid oklch(0.85 0.06 285 / 0.4);
   border-radius: var(--radius-xl);
   padding: var(--space-lg);
   box-shadow: var(--shadow-md);
   align-items: center;
   position: relative;
-  overflow: hidden;
+  z-index: 1;
 }
 
-/* 右上角标 */
+/* 保护层：装角标的大盒子，用来裁切圆角外的部分 */
+.lingxi-badge-container {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 右上角标 - 放入裁切大盒子中 */
 .lingxi-corner-badge {
   position: absolute;
   top: 16px;
@@ -571,8 +582,8 @@ body {
   padding: 4px 40px;
   transform: rotate(45deg);
   box-shadow: 0 2px 8px oklch(0.45 0.2 285 / 0.3);
-  z-index: 1;
   letter-spacing: 0.04em;
+  pointer-events: auto;
 }
 
 /* === 使用攻略弹窗 === */
@@ -1594,7 +1605,7 @@ body.modal-open {
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm); /* 步骤间更紧凑，让图标锚点更突出 */
   margin-top: var(--space-lg);
-  overflow: hidden; /* P3: 防止连接线溢出 */
+  overflow: visible; /* 允许图标 hover 上浮不被裁切 */
 }
 
 .deploy-step {
@@ -1622,8 +1633,8 @@ body.modal-open {
   width: 72px; /* 增大视觉锚点 */
   height: 72px;
   border-radius: 22px;
-  /* 粘土渐变底 + 多层阴影（含 inner shadow 模拟凹面） */
-  background: linear-gradient(135deg, oklch(1 0 0 / 0.8), oklch(0.96 0.02 280 / 0.6));
+  /* 不透明粘土渐变底——遮住底下的连接线 */
+  background: linear-gradient(135deg, oklch(0.99 0 0), oklch(0.96 0.02 280));
   border: 1px solid oklch(0.80 0.02 280 / 0.3);
   display: flex;
   align-items: center;
@@ -1677,120 +1688,183 @@ body.modal-open {
 }
 
 /* ============================================
-   Section 5: 培训收尾
+   Section 5: Bento Grid — 收尾信息卡
    ============================================ */
-.closing-grid {
+
+/* 非对称 3 列 Bento 网格 */
+.bento-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   margin-top: var(--space-md);
-  align-items: stretch; /* 两列等高，消除高度差异 */
 }
 
-/* 收尾区卡片内 flex 布局，CTA 按钮自然下沉到底部 */
-.closing-grid > .glass-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.closing-card h3 {
-  font-size: var(--text-h3);
-  margin-bottom: var(--space-sm);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.challenge-title {
-  font-size: var(--text-h3);
-  font-weight: 600;
-  margin-bottom: var(--space-xs);
-}
-
-.challenge-desc {
-  color: var(--color-text-secondary);
-}
-
-/* 作业细节元信息 */
-.challenge-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: var(--space-xs);
-}
-
-.challenge-meta span {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  background: oklch(0.95 0.02 280);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-}
-
-/* 培训资料两列布局 — P4: 右列加宽 */
-.resource-grid {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: var(--space-md);
-}
-
-.resource-col-title {
-  font-family: var(--font-display);
-  font-size: var(--text-small);
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-xs);
-  letter-spacing: 0.02em;
-}
-
-/* 弹窗触发按钮（内嵌在资源列表中） */
-.resource-modal-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 16px;
-  border-radius: var(--radius-sm);
+/* 通用 Bento 卡片 */
+.bento-card {
+  background: oklch(1 0 0 / 0.65);
+  border: 1px solid oklch(0.85 0.04 280 / 0.5);
+  border-radius: 20px;
+  transition: all 0.35s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
   text-decoration: none;
-  color: var(--color-accent);
-  background: oklch(0.95 0.04 285 / 0.5);
-  border: 1px dashed oklch(0.75 0.12 285 / 0.3);
-  font-size: var(--text-body);
-  font-family: inherit;
+  color: var(--color-text);
   cursor: pointer;
-  transition: all 0.3s var(--ease-out-quart);
+  font-family: inherit;
   text-align: left;
 }
 
-.resource-modal-btn:hover {
-  background: oklch(0.92 0.06 285 / 0.5);
-  transform: translateX(4px);
+.bento-card:hover {
+  transform: translateY(-3px);
+  border-color: oklch(0.70 0.14 285 / 0.4);
+  box-shadow:
+    0 8px 32px oklch(0.55 0.15 285 / 0.10),
+    0 2px 8px oklch(0 0 0 / 0.04);
 }
 
-.resource-list {
-  list-style: none;
+/* ---- Hero CTA 大卡（横跨 2 列） ---- */
+.bento-card--hero {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 0;
+  /* 渐变边框效果 */
+  background:
+    linear-gradient(135deg, oklch(0.98 0.02 280), oklch(0.96 0.03 300)) padding-box,
+    linear-gradient(135deg, oklch(0.75 0.15 285 / 0.4), oklch(0.70 0.18 310 / 0.3)) border-box;
+  border: 2px solid transparent;
+}
+
+.bento-card-inner {
+  padding: clamp(24px, 4vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  height: 100%;
+  justify-content: center;
 }
 
-.resource-list a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
+.bento-icon {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.bento-card-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: 10px;
   color: var(--color-text);
-  background: oklch(0.95 0.01 290);
-  transition: all 0.3s var(--ease-out-quart);
-  font-size: var(--text-body);
 }
 
-.resource-list a:hover {
-  background: oklch(0.92 0.03 290);
-  transform: translateX(4px);
+.bento-card-desc {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.bento-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.bento-meta span {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: oklch(0.94 0.03 285 / 0.6);
+  padding: 5px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.bento-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  border-radius: 100px;
+  background: var(--color-accent);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--text-body);
+  transition: all 0.3s var(--ease-out-quart);
+  align-self: flex-start;
+}
+
+.bento-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px oklch(0.55 0.20 285 / 0.30);
+}
+
+/* ---- 工具入口小卡 ---- */
+.bento-card--tool {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.bento-tool-icon {
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.bento-tool-name {
+  font-weight: 600;
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.bento-tool-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: oklch(0.92 0.06 285 / 0.5);
+  padding: 2px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.02em;
+}
+
+/* ---- 教程攻略小卡 ---- */
+.bento-card--doc {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  background: oklch(0.98 0.01 280 / 0.7);
+}
+
+.bento-doc-icon {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.bento-doc-title {
+  font-weight: 600;
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.bento-doc-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Bento 响应式 ---- */
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .bento-card--hero {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
 }
 
 /* section-auto：非全屏高度 */
@@ -1806,13 +1880,13 @@ body.modal-open {
    ============================================ */
 .site-footer {
   text-align: center;
-  padding: var(--space-lg) var(--space-md) var(--space-lg); /* 收紧顶部留白 */
+  padding: var(--space-md) var(--space-md) var(--space-lg);
   color: var(--color-text-secondary);
   font-size: var(--text-small);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* 品牌渐变分割线 */
@@ -1821,33 +1895,143 @@ body.modal-open {
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
   border-radius: 1px;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
-/* 飞翼 Logo */
-.footer-logo {
-  width: 120px;
-  height: 36px;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
+/* 回到顶部按钮 */
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 100px;
+  background: oklch(1 0 0 / 0.6);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-small);
+  font-weight: 500;
+  transition: all 0.3s var(--ease-out-quart);
 }
 
-.footer-logo:hover {
-  opacity: 1;
-}
-
-.footer-brand {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-body);
-  color: var(--color-text);
-  letter-spacing: 0.04em;
+.back-to-top:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px oklch(0.55 0.20 285 / 0.25);
 }
 
 .footer-copy {
   font-size: 12px;
   color: oklch(0.55 0.03 280);
   letter-spacing: 0.02em;
+}
+
+/* ============================================
+   ReactBits 增强交互效果
+   ============================================ */
+
+/* --- Blur Reveal：模糊淡入动画（替代 fade-up 增强版） --- */
+.blur-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(12px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo),
+    filter 0.9s var(--ease-out-expo);
+}
+
+.blur-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* --- Gradient Flow Text：流动渐变文本 --- */
+.gradient-flow-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-accent) 0%,
+    oklch(0.65 0.18 310) 25%,
+    oklch(0.60 0.22 250) 50%,
+    oklch(0.65 0.18 310) 75%,
+    var(--color-accent) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientFlow 4s ease-in-out infinite;
+}
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Spotlight Card：聚光灯追踪卡片 --- */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 聚光灯层——由 JS 控制 --mouse-x / --mouse-y */
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    oklch(0.60 0.20 285 / 0.08) 0%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+
+/* --- Count Up：数字计数动画 --- */
+.count-up-value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: var(--color-accent);
+  line-height: 1;
+  display: inline-block;
+  /* 数字宽度固定，防止布局跳动 */
+  font-variant-numeric: tabular-nums;
+}
+
+.count-up-label {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.count-up-item {
+  text-align: center;
+}
+
+.count-up-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: var(--space-md);
+  padding: var(--space-md) 0;
 }
 
 /* ============================================
@@ -2011,9 +2195,6 @@ body.modal-open {
   }
   .step-btn { white-space: nowrap; }
 
-  .closing-grid {
-    grid-template-columns: 1fr;
-  }
 
   .deploy-flow {
     grid-template-columns: 1fr;

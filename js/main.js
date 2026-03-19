@@ -425,25 +425,34 @@ function initHeroScene() {
 
   // --- 沙发（C4D 风简化家具） ---
   const sofaGroup = new THREE.Group();
-  // 座垫
+  // 座垫（抬高避免 Z-fighting）
   const seatGeo = new THREE.BoxGeometry(1.2, 0.3, 0.6);
-  const seat = new THREE.Mesh(seatGeo, clayMat('#c8a8dd', { roughness: 0.85 }));
+  const seatMat = clayMat('#c8a8dd', { roughness: 0.85 });
+  seatMat.polygonOffset = true;
+  seatMat.polygonOffsetFactor = 1;
+  seatMat.polygonOffsetUnits = 1;
+  const seat = new THREE.Mesh(seatGeo, seatMat);
+  seat.position.y = 0.15; // 抬高座垫，避免底面与地面 Z-fighting
   seat.castShadow = true;
   sofaGroup.add(seat);
   // 靠背
   const backGeo = new THREE.BoxGeometry(1.2, 0.5, 0.15);
-  const back = new THREE.Mesh(backGeo, clayMat('#c8a8dd', { roughness: 0.85 }));
-  back.position.set(0, 0.25, -0.22);
+  const backMat = clayMat('#c8a8dd', { roughness: 0.85 });
+  backMat.polygonOffset = true;
+  backMat.polygonOffsetFactor = -1;
+  backMat.polygonOffsetUnits = -1;
+  const back = new THREE.Mesh(backGeo, backMat);
+  back.position.set(0, 0.4, -0.22); // 靠背也抬高对应距离
   back.castShadow = true;
   sofaGroup.add(back);
   // 扶手
   const armGeo = new THREE.BoxGeometry(0.15, 0.35, 0.6);
   const armL = new THREE.Mesh(armGeo, clayMat('#b898cc'));
-  armL.position.set(-0.52, 0.1, 0);
+  armL.position.set(-0.52, 0.25, 0); // 扶手抬高对应距离
   armL.castShadow = true;
   sofaGroup.add(armL);
   const armR = new THREE.Mesh(armGeo.clone(), clayMat('#b898cc'));
-  armR.position.set(0.52, 0.1, 0);
+  armR.position.set(0.52, 0.25, 0);
   armR.castShadow = true;
   sofaGroup.add(armR);
   sofaGroup.position.set(2.2, 0.05, 1.2);
@@ -1008,7 +1017,100 @@ function initChatDemo() {
 // Deploy toggles 逻辑已被移除
 
 // ============================================
-// 6. GSAP 滚动动画（P0-bug: 安全降级）
+// 6. ReactBits 增强交互 — Blur Reveal 模糊淡入
+// ============================================
+function initBlurReveal() {
+  const elements = document.querySelectorAll('.blur-reveal');
+  if (elements.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // 只触发一次
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  elements.forEach(el => observer.observe(el));
+}
+
+// ============================================
+// 7. ReactBits 增强交互 — Count Up 数字计数
+// ============================================
+function initCountUp() {
+  const elements = document.querySelectorAll('[data-count-target]');
+  if (elements.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.countTarget, 10);
+          const suffix = el.dataset.countSuffix || '';
+          // 小数字(≤10)给更长的动画时间，避免一闪而过
+          const defaultDur = target <= 10 ? 2200 : 1500;
+          const duration = parseInt(el.dataset.countDuration, 10) || defaultDur;
+          // 延迟 600ms 再开始，等 blur-reveal 淡入完成
+          setTimeout(() => animateCount(el, 0, target, duration, suffix), 600);
+          observer.unobserve(el);
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+
+  elements.forEach(el => observer.observe(el));
+
+  function animateCount(el, start, end, duration, suffix) {
+    const startTime = performance.now();
+    function tick(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out-cubic 缓动：减速感更明显，数字停留更久
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + (end - start) * eased);
+      el.textContent = current + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+}
+
+// ============================================
+// 8. ReactBits 增强交互 — Spotlight Card 聚光灯追踪
+// ============================================
+function initSpotlightCards() {
+  const cards = document.querySelectorAll('.spotlight-card');
+  if (cards.length === 0) return;
+
+  cards.forEach(card => {
+    let rafId = null;
+    card.addEventListener('mousemove', (e) => {
+      if (rafId) return; // rAF 节流
+      rafId = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+        rafId = null;
+      });
+    }, { passive: true });
+  });
+}
+
+
+
+
+// ============================================
+// 10. GSAP 滚动动画（P0-bug: 安全降级）
 // ============================================
 function initScrollAnimations() {
   const fadeElements = document.querySelectorAll('.fade-up');
@@ -1108,4 +1210,10 @@ document.addEventListener('DOMContentLoaded', () => {
   try { initChatDemo(); } catch (e) { console.error('对话演示初始化失败:', e); }
   try { initShowcaseIframe(); } catch (e) { console.error('Showcase iframe 初始化失败:', e); }
   try { initScrollAnimations(); } catch (e) { console.error('滚动动画初始化失败:', e); }
+  // ReactBits 增强交互效果
+  try { initBlurReveal(); } catch (e) { console.error('Blur Reveal 初始化失败:', e); }
+  try { initCountUp(); } catch (e) { console.error('Count Up 初始化失败:', e); }
+  try { initSpotlightCards(); } catch (e) { console.error('Spotlight Cards 初始化失败:', e); }
+
+
 });
