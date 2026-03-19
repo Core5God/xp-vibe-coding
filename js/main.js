@@ -605,13 +605,9 @@ function initHeroScene() {
     });
 
     islandGroup.add(carModel);
-    console.log('🚗 汽车模型加载成功', {
-      size: `${size.x.toFixed(1)}×${size.y.toFixed(1)}×${size.z.toFixed(1)}`,
-      scale: scale.toFixed(3),
-      bottomY: bottomY.toFixed(3)
-    });
+
   }, undefined, (err) => {
-    console.warn('汽车模型加载失败:', err);
+    // 汽车模型加载失败时静默降级
   });
 
   scene.add(islandGroup);
@@ -1139,7 +1135,7 @@ function initScrollAnimations() {
         );
       });
     } catch (e) {
-      console.warn('GSAP 初始化失败，使用降级方案', e);
+      // GSAP 初始化失败，使用降级方案
       fallbackObserver(fadeElements);
     }
   } else {
@@ -1204,16 +1200,16 @@ function initShowcaseIframe() {
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
   // 每个模块独立 try-catch，避免一个失败全部中断
-  try { initHeroScene(); } catch (e) { console.error('Hero 3D 场景初始化失败:', e); }
-  try { initNavigation(); } catch (e) { console.error('导航初始化失败:', e); }
-  try { initToolTabs(); } catch (e) { console.error('Tab 切换初始化失败:', e); }
-  try { initChatDemo(); } catch (e) { console.error('对话演示初始化失败:', e); }
-  try { initShowcaseIframe(); } catch (e) { console.error('Showcase iframe 初始化失败:', e); }
-  try { initScrollAnimations(); } catch (e) { console.error('滚动动画初始化失败:', e); }
+  try { initHeroScene(); } catch (e) { /* Hero 3D 场景初始化失败，静默降级 */ }
+  try { initNavigation(); } catch (e) { /* 导航初始化失败 */ }
+  try { initToolTabs(); } catch (e) { /* Tab 切换初始化失败 */ }
+  try { initChatDemo(); } catch (e) { /* 对话演示初始化失败 */ }
+  try { initShowcaseIframe(); } catch (e) { /* Showcase iframe 初始化失败 */ }
+  try { initScrollAnimations(); } catch (e) { /* 滚动动画初始化失败 */ }
   // ReactBits 增强交互效果
-  try { initBlurReveal(); } catch (e) { console.error('Blur Reveal 初始化失败:', e); }
-  try { initCountUp(); } catch (e) { console.error('Count Up 初始化失败:', e); }
-  try { initSpotlightCards(); } catch (e) { console.error('Spotlight Cards 初始化失败:', e); }
+  try { initBlurReveal(); } catch (e) { /* Blur Reveal 初始化失败 */ }
+  try { initCountUp(); } catch (e) { /* Count Up 初始化失败 */ }
+  try { initSpotlightCards(); } catch (e) { /* Spotlight Cards 初始化失败 */ }
 
 
 });

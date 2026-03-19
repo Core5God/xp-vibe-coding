@@ -34,13 +34,10 @@
       <li><a href="#deploy" class="nav-link" data-section="deploy">部署</a></li>
       <li><a href="#closing" class="nav-link" data-section="closing">下一步</a></li>
     </ul>
+    <!-- OPT-06: 徽标统一收入导航栏 -->
+    <span class="nav-badge">XPENG 内部分享</span>
     <div class="nav-progress" id="nav-progress"></div>
   </nav>
-
-  <!-- 右上角独立角标，不干扰导航栏 -->
-  <div class="page-badge" id="page-badge">
-    <span class="page-badge-text">XPENG 内部分享</span>
-  </div>
 
   <!-- ====== Hero Section ====== -->
   <section id="hero" class="section">
@@ -116,12 +113,13 @@
           </div>
           <div class="lingxi-hero-visual">
             <!-- 四阶段流程竖排 -->
+            <!-- OPT-02: 步骤增加简要描述 -->
             <div class="lingxi-steps-vertical">
               <span class="lingxi-steps-title">上手四步走</span>
-              <div class="lingxi-step-v"><span class="lingxi-step-num">1</span><span>GitLab 准备</span></div>
-              <div class="lingxi-step-v"><span class="lingxi-step-num">2</span><span>Web 端初始化</span></div>
-              <div class="lingxi-step-v"><span class="lingxi-step-num">3</span><span>IDE 插件端</span></div>
-              <div class="lingxi-step-v"><span class="lingxi-step-num">4</span><span>实战开发</span></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">1</span><div class="lingxi-step-info"><span class="lingxi-step-name">GitLab 准备</span><span class="lingxi-step-desc">创建代码仓库</span></div></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">2</span><div class="lingxi-step-info"><span class="lingxi-step-name">Web 端初始化</span><span class="lingxi-step-desc">在线开始编码</span></div></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">3</span><div class="lingxi-step-info"><span class="lingxi-step-name">IDE 插件端</span><span class="lingxi-step-desc">本地无缝衔接</span></div></div>
+              <div class="lingxi-step-v"><span class="lingxi-step-num">4</span><div class="lingxi-step-info"><span class="lingxi-step-name">实战开发</span><span class="lingxi-step-desc">AI 驱动产出</span></div></div>
             </div>
           </div>
         </div>
@@ -364,7 +362,8 @@
               <span>📬 提交：飞书群内发链接</span>
               <span>⭐ 优秀作品获展示机会</span>
             </div>
-            <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="bento-cta">打开灵犀工作台 →</a>
+            <!-- OPT-05: CTA 文案差异化，避免与 Tools section 重复 -->
+            <a href="https://code.x-peng.com/workbench/" target="_blank" rel="noopener" class="bento-cta">立即开始实战 →</a>
           </div>
         </div>
 
@@ -380,28 +379,31 @@
           <span class="bento-tool-name">Google AI Studio</span>
         </a>
 
-        <a href="https://workflow.beastle.cn" target="_blank" rel="noopener" class="bento-card bento-card--tool spotlight-card">
-          <span class="bento-tool-icon">🌐</span>
-          <span class="bento-tool-name">项目案例：Workflow</span>
+        <!-- FIX-02: 补充卡片描述 -->
+        <a href="https://workflow.beastle.cn" target="_blank" rel="noopener" class="bento-card bento-card--doc spotlight-card">
+          <span class="bento-doc-icon">🌐</span>
+          <span class="bento-doc-title">项目案例：Workflow</span>
+          <span class="bento-doc-sub">从需求到部署的完整实战</span>
         </a>
 
         <!-- 教程攻略卡片 -->
+        <!-- FIX-02: 丰富卡片描述文案 -->
         <a href="https://xiaopeng.feishu.cn/docx/JWNvdE7qAolZspxON8hcoRrSntb" target="_blank" rel="noopener" class="bento-card bento-card--doc spotlight-card">
           <span class="bento-doc-icon">📄</span>
           <span class="bento-doc-title">培训完整文档</span>
-          <span class="bento-doc-sub">飞书在线文档</span>
+          <span class="bento-doc-sub">课程讲义与操作手册</span>
         </a>
 
         <button type="button" class="bento-card bento-card--doc spotlight-card" onclick="openGuideModal('guideModal')">
           <span class="bento-doc-icon">📖</span>
           <span class="bento-doc-title">灵犀使用攻略</span>
-          <span class="bento-doc-sub">新手上路指南</span>
+          <span class="bento-doc-sub">从注册到实战的新手指南</span>
         </button>
 
         <button type="button" class="bento-card bento-card--doc spotlight-card" onclick="openGuideModal('gasModal')">
           <span class="bento-doc-icon">📖</span>
           <span class="bento-doc-title">GAS 使用攻略</span>
-          <span class="bento-doc-sub">Google AI Studio</span>
+          <span class="bento-doc-sub">Prompt 调优与 API 原型化</span>
         </button>
       </div>
     </div>
@@ -417,13 +419,14 @@
       </svg>
       <span>回到顶部</span>
     </a>
-    <p class="footer-copy">© 2025 小鹏汽车 · 数据智能中心</p>
+    <!-- NICE-03: 版权年份动态化 -->
+    <p class="footer-copy">© <script>document.write(new Date().getFullYear())</script> 小鹏汽车 · 数据智能中心</p>
   </footer>
 
   <!-- ====== Scripts ====== -->
   <!-- GSAP + ScrollTrigger -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <!-- 主逻辑 -->
   <script src="js/main.js" type="module"></script>
   <!-- 全局点击火花效果 -->
